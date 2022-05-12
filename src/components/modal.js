@@ -1,5 +1,6 @@
 import {useState, useEffect} from "react"
-export default function Modal() {
+import {sb} from "../utils/index"
+export default function Modal({display, setDisplay}) {
     let [descriptions, setDescription] = useState([ 
         {name: 0, value:""}, {name: 1, value:""}
      ])
@@ -20,13 +21,31 @@ export default function Modal() {
 
 
 
-  const submitAd = (e)=>{
+  const submitAd = async (e)=>{
       e.preventDefault()
     console.log(carName, descriptions)
+    let option = {
+        method:"POST",
+        headers:{
+            'Content-Type': "application/json"
+        },
+        body:JSON.stringify({
+            name: carName,
+            description: descriptions.map(d=> d.value)
+        })
+
+    }
+
+    let postad = await sb.postAds(option)
+    if(postad.response === "saved"){
+        alert("Ad saved")
+    } else {
+        alert("Error Occured")
+    }
   }
   return (
     <div style={{
-    display: "none",// props.display, /* Hidden by default */
+    display: display,// props.display, /* Hidden by default */
     position: "fixed", /* Stay in place */
     zIndex: 1, /* Sit on top */
     left: 0,
@@ -50,7 +69,7 @@ export default function Modal() {
             marginBottom: "12px",
             marginTop: "16px",
           }}
-          //onClick={() => props.setDisplay("none")}
+          onClick={() => setDisplay("none")}
         >
           <img alt="" /> ◁Back
         </button>
